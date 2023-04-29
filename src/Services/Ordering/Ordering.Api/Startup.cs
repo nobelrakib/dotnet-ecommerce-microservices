@@ -1,4 +1,5 @@
 //using EventBus.Messages.Common;
+using EventBus.Messages.Common;
 using HealthChecks.UI.Client;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
@@ -31,20 +32,20 @@ namespace Ordering.API
             services.AddInfrastructureServices(Configuration);
 
             // MassTransit-RabbitMQ Configuration
-            //services.AddMassTransit(config => {
+            services.AddMassTransit(config => {
 
-            //    config.AddConsumer<BasketCheckoutConsumer>();
+                config.AddConsumer<BasketCheckoutConsumer>();
 
-            //    config.UsingRabbitMq((ctx, cfg) => {
-            //        cfg.Host(Configuration["EventBusSettings:HostAddress"]);
-            //        cfg.UseHealthCheck(ctx);
+                config.UsingRabbitMq((ctx, cfg) => {
+                    cfg.Host(Configuration["EventBusSettings:HostAddress"]);
 
-            //        cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c => {
-            //            c.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
-            //        });
-            //    });
-            //});
-            //services.AddMassTransitHostedService();
+                    cfg.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, c =>
+                    {
+                        c.ConfigureConsumer<BasketCheckoutConsumer>(ctx);
+                    });
+                });
+            });
+            services.AddMassTransitHostedService();
 
             // General Configuration
             services.AddScoped<BasketCheckoutConsumer>();
